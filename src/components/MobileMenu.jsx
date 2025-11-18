@@ -21,7 +21,7 @@ export default function MobileMenu({ isOpen, onClose, user, onLogout, goToLogin,
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
             <div className="flex items-center gap-2">
               <BookOpen className="w-6 h-6 text-violet-600" />
-              <span className="text-lg font-bold">SkillForge AI</span>
+              <span className="text-lg font-bold">Skillexa</span>
             </div>
             <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg">
               <X className="w-5 h-5" />
