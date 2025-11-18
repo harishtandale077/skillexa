@@ -100,7 +100,7 @@ export default function Register({ goToLogin, goToLanding, onRegister }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2 cursor-pointer" onClick={goToLanding}>
             <BookOpen className="w-6 h-6 text-violet-600" />
-            <span className="text-lg font-bold">SkillForge AI</span>
+            <span className="text-lg font-bold">Skillexa </span>
           </div>
 
           <div className="flex items-center gap-4 sm:gap-6">
