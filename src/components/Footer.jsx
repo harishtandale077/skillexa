@@ -67,7 +67,7 @@ export default function Footer() {
           <div className="lg:col-span-2">
             <div className="flex items-center gap-2 mb-6">
               <BookOpen className="w-8 h-8 text-violet-400" />
-              <span className="text-2xl font-bold">SkillForge AI</span>
+              <span className="text-2xl font-bold">Skillexa</span>
             </div>
             
             <p className="text-gray-300 text-base leading-relaxed mb-6 max-w-md">
@@ -78,11 +78,11 @@ export default function Footer() {
             <div className="space-y-3 mb-6">
               <div className="flex items-center gap-3 text-gray-300">
                 <MapPin className="w-4 h-4 text-violet-400 flex-shrink-0" />
-                <span className="text-sm">San Francisco, CA & Remote</span>
+                <span className="text-sm">Nagpur, Maharashtra</span>
               </div>
               <div className="flex items-center gap-3 text-gray-300">
                 <Phone className="w-4 h-4 text-violet-400 flex-shrink-0" />
-                <span className="text-sm">+1 (555) 123-4567</span>
+                <span className="text-sm">+91 7499636416</span>
               </div>
               <div className="flex items-center gap-3 text-gray-300">
                 <Clock className="w-4 h-4 text-violet-400 flex-shrink-0" />
@@ -162,7 +162,7 @@ export default function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-gray-400 text-sm text-center sm:text-left">
-              <p>&copy; {currentYear} SkillForge AI. All rights reserved.</p>
+              <p>&copy; {currentYear} Skillexa . All rights reserved.</p>
             </div>
             
             <div className="flex flex-wrap items-center gap-6 text-sm text-gray-400">
