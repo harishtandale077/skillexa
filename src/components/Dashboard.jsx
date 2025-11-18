@@ -163,7 +163,7 @@ export default function Dashboard({ user, onLogout }) {
                 alt="SkillForge AI"
                 className="w-8 h-8 object-contain"
               />
-              <span className="text-lg font-bold text-gray-900">SkillForge AI</span>
+              <span className="text-lg font-bold text-gray-900">Skillexa</span>
             </div>
             <button
               onClick={() => setIsSidebarOpen(false)}
@@ -244,7 +244,7 @@ export default function Dashboard({ user, onLogout }) {
               
               <div>
                 <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
-                  Good morning, <span className="text-violet-600">SkillMaster_42</span>!
+                  Good morning, <span className="text-violet-600">SkillMaster</span>!
                 </h1>
                 <p className="text-gray-600 mt-1 text-sm sm:text-base">
                   You're on a 14-day learning streak. Keep it up! 🔥
