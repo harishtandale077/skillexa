@@ -1,46 +1,79 @@
+import { CheckCircle, ArrowRight, Zap, Shield, Users } from 'lucide-react';
+
 export default function CallToAction() {
+  const benefits = [
+    { icon: Shield, text: 'Secure & Private', color: 'text-green-600' },
+    { icon: Zap, text: 'Instant Results', color: 'text-orange-600' },
+    { icon: Users, text: '10K+ Active Learners', color: 'text-blue-600' }
+  ];
+
   return (
-    <section className="py-20 px-6 bg-gradient-to-br from-violet-50 to-blue-50">
-      <div className="max-w-4xl mx-auto text-center">
-        <h2 className="text-4xl lg:text-5xl font-bold mb-6">
+    <section className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 bg-gradient-to-br from-violet-600 via-purple-600 to-blue-600 relative overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute inset-0 bg-black/10"></div>
+      <div className="absolute top-0 left-0 w-full h-full">
+        <div className="absolute top-10 left-10 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
+        <div className="absolute bottom-10 right-10 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-white/5 rounded-full blur-2xl"></div>
+      </div>
+
+      <div className="max-w-4xl mx-auto text-center relative z-10">
+        <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium mb-6">
+          <Zap className="w-4 h-4" />
+          Limited Time Offer
+        </div>
+
+        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-white">
           Ready to Master Your Next Skill?
         </h2>
-        <p className="text-lg text-gray-600 mb-10 leading-relaxed">
+
+        <p className="text-lg sm:text-xl text-white/90 mb-10 leading-relaxed max-w-3xl mx-auto">
           Join thousands of learners who are already transforming their careers with AI-powered skill validation. Start your free trial today—no credit card required.
         </p>
-        <div className="flex flex-wrap justify-center gap-4">
-          <button className="bg-violet-600 hover:bg-violet-700 text-white px-8 py-3 rounded-lg font-medium transition-colors flex items-center gap-2">
+
+        <div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
+          <button className="bg-white hover:bg-gray-100 text-violet-600 px-8 py-4 rounded-lg font-bold text-lg transition-all duration-300 flex items-center justify-center gap-2 shadow-xl hover:shadow-2xl transform hover:-translate-y-1">
             Start Free Trial
-            <span className="ml-1">→</span>
+            <ArrowRight className="w-5 h-5" />
           </button>
-          <span className="flex items-center text-gray-700">
-            Already have an account?
-          </span>
+          <button className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-8 py-4 rounded-lg font-bold text-lg border border-white/30 transition-all duration-300">
+            Watch Demo
+          </button>
         </div>
-        <div className="flex justify-center gap-12 mt-12 text-sm text-gray-600">
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center">
-              <svg className="w-3 h-3 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
+
+        <div className="flex flex-col sm:flex-row justify-center gap-6 sm:gap-12 text-white/90">
+          {benefits.map((benefit, index) => {
+            const Icon = benefit.icon;
+            return (
+              <div key={index} className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                  <Icon className="w-4 h-4 text-white" />
+                </div>
+                <span className="font-medium">{benefit.text}</span>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Trust Indicators */}
+        <div className="mt-12 pt-8 border-t border-white/20">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
+            <div>
+              <div className="text-2xl sm:text-3xl font-bold text-white mb-1">99.9%</div>
+              <div className="text-sm text-white/80">Uptime</div>
             </div>
-            <span>Secure & Private</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded-full bg-orange-100 flex items-center justify-center">
-              <svg className="w-3 h-3 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
+            <div>
+              <div className="text-2xl sm:text-3xl font-bold text-white mb-1">24/7</div>
+              <div className="text-sm text-white/80">Support</div>
             </div>
-            <span>Instant Results</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center">
-              <svg className="w-3 h-3 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
+            <div>
+              <div className="text-2xl sm:text-3xl font-bold text-white mb-1">SOC2</div>
+              <div className="text-sm text-white/80">Compliant</div>
             </div>
-            <span>10K+ Active Learners</span>
+            <div>
+              <div className="text-2xl sm:text-3xl font-bold text-white mb-1">GDPR</div>
+              <div className="text-sm text-white/80">Ready</div>
+            </div>
           </div>
         </div>
       </div>

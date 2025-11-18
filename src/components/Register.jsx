@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { BookOpen, Eye, EyeOff, ArrowLeft, CheckCircle, X } from 'lucide-react';
 
 export default function Register({ goToLogin, goToLanding, onRegister }) {
   const [formData, setFormData] = useState({
@@ -9,26 +10,69 @@ export default function Register({ goToLogin, goToLanding, onRegister }) {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  const passwordRequirements = [
+    { text: 'At least 8 characters', test: (pwd) => pwd.length >= 8 },
+    { text: 'Contains uppercase letter', test: (pwd) => /[A-Z]/.test(pwd) },
+    { text: 'Contains lowercase letter', test: (pwd) => /[a-z]/.test(pwd) },
+    { text: 'Contains number', test: (pwd) => /\d/.test(pwd) },
+  ];
 
   const handleInputChange = (e) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: value
     });
+    
+    // Clear errors when user starts typing
+    if (errors[name]) {
+      setErrors({...errors, [name]: ''});
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.fullName.trim()) {
+      newErrors.fullName = 'Full name is required';
+    } else if (formData.fullName.trim().length < 2) {
+      newErrors.fullName = 'Full name must be at least 2 characters';
+    }
+    
+    if (!formData.email) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Email is invalid';
+    }
+    
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters';
+    }
+    
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = 'Please confirm your password';
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match';
+    }
+    
+    if (!agreedToTerms) {
+      newErrors.terms = 'You must agree to the Terms of Service and Privacy Policy';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!agreedToTerms) {
-      alert('Please agree to the Terms of Service and Privacy Policy');
-      return;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match');
-      return;
-    }
+    if (!validateForm()) return;
 
     setIsLoading(true);
 
@@ -46,144 +90,214 @@ export default function Register({ goToLogin, goToLanding, onRegister }) {
       
       onRegister(userData);
       setIsLoading(false);
-    }, 1000);
+    }, 1500);
   };
+
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-blue-50">
       {/* Top Navbar */}
-      <header className="w-full flex justify-between items-center px-10 py-5 border-b">
-        <h1 className="text-2xl font-semibold cursor-pointer" onClick={goToLanding}>
-          AI Skill Forage
-        </h1>
+      <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2 cursor-pointer" onClick={goToLanding}>
+            <BookOpen className="w-6 h-6 text-violet-600" />
+            <span className="text-lg font-bold">SkillForge AI</span>
+          </div>
 
-        <div className="flex items-center gap-6">
-          <button
-            onClick={goToLogin}
-            className="text-gray-800 font-medium hover:underline"
-          >
-            Login
-          </button>
+          <div className="flex items-center gap-4 sm:gap-6">
+            <button
+              onClick={goToLanding}
+              className="flex items-center gap-2 text-gray-700 hover:text-gray-900 font-medium transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span className="hidden sm:inline">Back to Home</span>
+            </button>
 
-          <button
-            className="bg-violet-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-violet-700 transition"
-            onClick={goToLanding}
-          >
-            Home
-          </button>
+            <button
+              onClick={goToLogin}
+              className="text-gray-800 font-medium hover:text-gray-900 transition-colors"
+            >
+              Sign In
+            </button>
+          </div>
         </div>
       </header>
 
       {/* Main Form */}
-      <div className="flex justify-center mt-10 px-4">
-        <div className="w-full max-w-xl">
-
-          <h2 className="text-3xl font-semibold text-center">Create Account</h2>
-          <p className="text-center text-gray-500 mt-2">
-            Join AI Skill Forage and start mastering skills today
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+        <div className="text-center mb-8 sm:mb-12">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Create Your Account</h2>
+          <p className="text-gray-600 text-base sm:text-lg">
+            Join thousands of learners mastering AI skills with personalized learning paths
           </p>
+        </div>
 
-          <form className="mt-10 space-y-6" onSubmit={handleSubmit}>
-
+        <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 border border-gray-200">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Full Name */}
             <div>
-              <label className="text-gray-700 font-medium">Full Name</label>
+              <label className="block text-sm font-bold text-gray-900 mb-2">
+                Full Name
+              </label>
               <input
                 type="text"
                 name="fullName"
                 value={formData.fullName}
                 onChange={handleInputChange}
                 placeholder="John Doe"
-                required
-                className="w-full mt-2 px-4 py-3 border rounded-lg focus:outline-none focus:border-violet-500"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent outline-none transition-all ${
+                  errors.fullName ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                }`}
               />
+              {errors.fullName && <p className="text-red-600 text-sm mt-1">{errors.fullName}</p>}
             </div>
 
             {/* Email */}
             <div>
-              <label className="text-gray-700 font-medium">Email Address</label>
+              <label className="block text-sm font-bold text-gray-900 mb-2">
+                Email Address
+              </label>
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
                 placeholder="you@example.com"
-                required
-                className="w-full mt-2 px-4 py-3 border rounded-lg focus:outline-none focus:border-violet-500"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent outline-none transition-all ${
+                  errors.email ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                }`}
               />
+              {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
             </div>
 
             {/* Password */}
             <div>
-              <label className="text-gray-700 font-medium">Password</label>
+              <label className="block text-sm font-bold text-gray-900 mb-2">
+                Password
+              </label>
               <div className="relative">
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="w-full mt-2 px-4 py-3 border rounded-lg pr-10 focus:outline-none focus:border-violet-500"
+                  className={`w-full px-4 py-3 pr-12 border rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent outline-none transition-all ${
+                    errors.password ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                  }`}
                   placeholder="••••••••"
-                  required
-                  minLength="6"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
+              {errors.password && <p className="text-red-600 text-sm mt-1">{errors.password}</p>}
+              
+              {/* Password Requirements */}
+              {formData.password && (
+                <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+                  <p className="text-sm font-medium text-gray-700 mb-2">Password Requirements:</p>
+                  <div className="space-y-1">
+                    {passwordRequirements.map((req, index) => {
+                      const isValid = req.test(formData.password);
+                      return (
+                        <div key={index} className="flex items-center gap-2 text-sm">
+                          {isValid ? (
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                          ) : (
+                            <X className="w-4 h-4 text-red-400" />
+                          )}
+                          <span className={isValid ? 'text-green-700' : 'text-gray-600'}>
+                            {req.text}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Confirm Password */}
             <div>
-              <label className="text-gray-700 font-medium">Confirm Password</label>
+              <label className="block text-sm font-bold text-gray-900 mb-2">
+                Confirm Password
+              </label>
               <div className="relative">
                 <input
-                  type="password"
+                  type={showConfirmPassword ? 'text' : 'password'}
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
-                  className="w-full mt-2 px-4 py-3 border rounded-lg pr-10 focus:outline-none focus:border-violet-500"
+                  className={`w-full px-4 py-3 pr-12 border rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent outline-none transition-all ${
+                    errors.confirmPassword ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                  }`}
                   placeholder="••••••••"
-                  required
-                  minLength="6"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
+              {errors.confirmPassword && <p className="text-red-600 text-sm mt-1">{errors.confirmPassword}</p>}
             </div>
 
             {/* Terms */}
-            <div className="flex items-start gap-3">
-              <input 
-                type="checkbox" 
-                className="mt-1" 
-                checked={agreedToTerms}
-                onChange={(e) => setAgreedToTerms(e.target.checked)}
-                required
-              />
-              <p className="text-gray-600 text-sm">
-                I agree to the{" "}
-                <span className="text-violet-600 font-medium cursor-pointer">Terms of Service</span>{" "}
-                and{" "}
-                <span className="text-violet-600 font-medium cursor-pointer">Privacy Policy</span>
-              </p>
+            <div>
+              <div className="flex items-start gap-3">
+                <input 
+                  type="checkbox" 
+                  id="terms"
+                  className="mt-1 w-4 h-4 text-violet-600 border-gray-300 rounded focus:ring-violet-500 accent-violet-600" 
+                  checked={agreedToTerms}
+                  onChange={(e) => setAgreedToTerms(e.target.checked)}
+                />
+                <label htmlFor="terms" className="text-sm text-gray-700 leading-relaxed">
+                  I agree to the{" "}
+                  <button type="button" className="text-violet-600 font-medium hover:underline">
+                    Terms of Service
+                  </button>{" "}
+                  and{" "}
+                  <button type="button" className="text-violet-600 font-medium hover:underline">
+                    Privacy Policy
+                  </button>
+                </label>
+              </div>
+              {errors.terms && <p className="text-red-600 text-sm mt-1">{errors.terms}</p>}
             </div>
 
             {/* Create Account */}
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-violet-600 to-purple-500 disabled:opacity-50 disabled:cursor-not-allowed text-white py-3 rounded-lg font-semibold text-lg mt-2 hover:opacity-90 transition"
+              className="w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white py-3 rounded-lg font-bold text-lg transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
-              {isLoading ? 'Creating Account...' : 'Create Account →'}
+              {isLoading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Creating Account...
+                </>
+              ) : (
+                'Create Account →'
+              )}
             </button>
           </form>
 
           {/* Already have account? */}
-          <p className="text-center text-gray-600 mt-6">
+          <div className="mt-8 text-center text-sm text-gray-600">
             Already have an account?{" "}
-            <span
+            <button
               onClick={goToLogin}
-              className="text-violet-600 font-medium cursor-pointer"
+              className="text-violet-600 hover:text-violet-700 font-bold underline"
             >
-              Login here
-            </span>
-          </p>
+              Sign in here
+            </button>
+          </div>
         </div>
       </div>
     </div>

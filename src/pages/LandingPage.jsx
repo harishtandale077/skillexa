@@ -6,7 +6,7 @@ import Footer from '../components/Footer';
 
 export default function LandingPage({ goToLogin, goToRegister }) {
   return (
-    <div className="min-h-screen bg-white pt-20">
+    <div className="min-h-screen bg-white">
       <Hero goToLogin={goToLogin} goToRegister={goToRegister} />
       <Features />
       <Testimonials />
