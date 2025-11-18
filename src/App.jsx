@@ -90,7 +90,7 @@ function App() {
       <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-blue-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-violet-200 border-t-violet-600 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 font-medium">Loading SkillForge AI...</p>
+          <p className="text-gray-600 font-medium">Loading Skillexa AI...</p>
         </div>
       </div>
     );
