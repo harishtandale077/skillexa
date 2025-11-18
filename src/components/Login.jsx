@@ -1,10 +1,33 @@
 import { useState } from 'react';
 import { BookOpen, CheckCircle, User, Shield, GraduationCap } from 'lucide-react';
 
-export default function Login({ goToRegister, goToLanding }) {
+export default function Login({ goToRegister, goToLanding, onLogin }) {
   const [email, setEmail] = useState('user@example.com');
   const [password, setPassword] = useState('••••••••••');
   const [rememberMe, setRememberMe] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    // Simulate API call
+    setTimeout(() => {
+      // Mock authentication - in real app, validate against backend
+      const userData = {
+        name: 'SkillMaster_42',
+        email: email,
+        id: '1',
+        streak: 14,
+        points: 12500,
+        examsCompleted: 18,
+        masteredSkills: 4
+      };
+      
+      onLogin(userData);
+      setIsLoading(false);
+    }, 1000);
+  };
 
   return (
     <div className="min-h-screen bg-white pt-20">
@@ -46,7 +69,7 @@ export default function Login({ goToRegister, goToLanding }) {
             <h2 className="text-3xl font-bold mb-2 text-gray-900">Welcome Back</h2>
             <p className="text-gray-600 mb-8">Sign in to your account to continue learning</p>
 
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={handleSubmit}>
               {/* Email */}
               <div>
                 <label className="block text-sm font-bold text-gray-900 mb-2">
@@ -101,9 +124,10 @@ export default function Login({ goToRegister, goToLanding }) {
 
               <button
                 type="submit"
-                className="w-full bg-violet-600 hover:bg-violet-700 text-white py-3 rounded-lg font-bold transition-colors flex items-center justify-center gap-2"
+                disabled={isLoading}
+                className="w-full bg-violet-600 hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed text-white py-3 rounded-lg font-bold transition-colors flex items-center justify-center gap-2"
               >
-                Sign In →
+                {isLoading ? 'Signing In...' : 'Sign In →'}
               </button>
             </form>
 

@@ -1,4 +1,53 @@
-export default function Register({ goToLogin, goToLanding }) {
+import { useState } from 'react';
+
+export default function Register({ goToLogin, goToLanding, onRegister }) {
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!agreedToTerms) {
+      alert('Please agree to the Terms of Service and Privacy Policy');
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
+
+    setIsLoading(true);
+
+    // Simulate API call
+    setTimeout(() => {
+      const userData = {
+        name: formData.fullName,
+        email: formData.email,
+        id: Date.now().toString(),
+        streak: 0,
+        points: 0,
+        examsCompleted: 0,
+        masteredSkills: 0
+      };
+      
+      onRegister(userData);
+      setIsLoading(false);
+    }, 1000);
+  };
   return (
     <div className="min-h-screen bg-white flex flex-col">
 
@@ -34,14 +83,18 @@ export default function Register({ goToLogin, goToLanding }) {
             Join AI Skill Forage and start mastering skills today
           </p>
 
-          <form className="mt-10 space-y-6">
+          <form className="mt-10 space-y-6" onSubmit={handleSubmit}>
 
             {/* Full Name */}
             <div>
               <label className="text-gray-700 font-medium">Full Name</label>
               <input
                 type="text"
+                name="fullName"
+                value={formData.fullName}
+                onChange={handleInputChange}
                 placeholder="John Doe"
+                required
                 className="w-full mt-2 px-4 py-3 border rounded-lg focus:outline-none focus:border-violet-500"
               />
             </div>
@@ -51,7 +104,11 @@ export default function Register({ goToLogin, goToLanding }) {
               <label className="text-gray-700 font-medium">Email Address</label>
               <input
                 type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
                 placeholder="you@example.com"
+                required
                 className="w-full mt-2 px-4 py-3 border rounded-lg focus:outline-none focus:border-violet-500"
               />
             </div>
@@ -62,8 +119,13 @@ export default function Register({ goToLogin, goToLanding }) {
               <div className="relative">
                 <input
                   type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
                   className="w-full mt-2 px-4 py-3 border rounded-lg pr-10 focus:outline-none focus:border-violet-500"
                   placeholder="••••••••"
+                  required
+                  minLength="6"
                 />
               </div>
             </div>
@@ -74,15 +136,26 @@ export default function Register({ goToLogin, goToLanding }) {
               <div className="relative">
                 <input
                   type="password"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
                   className="w-full mt-2 px-4 py-3 border rounded-lg pr-10 focus:outline-none focus:border-violet-500"
                   placeholder="••••••••"
+                  required
+                  minLength="6"
                 />
               </div>
             </div>
 
             {/* Terms */}
             <div className="flex items-start gap-3">
-              <input type="checkbox" className="mt-1" />
+              <input 
+                type="checkbox" 
+                className="mt-1" 
+                checked={agreedToTerms}
+                onChange={(e) => setAgreedToTerms(e.target.checked)}
+                required
+              />
               <p className="text-gray-600 text-sm">
                 I agree to the{" "}
                 <span className="text-violet-600 font-medium cursor-pointer">Terms of Service</span>{" "}
@@ -94,9 +167,10 @@ export default function Register({ goToLogin, goToLanding }) {
             {/* Create Account */}
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-violet-600 to-purple-500 text-white py-3 rounded-lg font-semibold text-lg mt-2 hover:opacity-90 transition"
+              disabled={isLoading}
+              className="w-full bg-gradient-to-r from-violet-600 to-purple-500 disabled:opacity-50 disabled:cursor-not-allowed text-white py-3 rounded-lg font-semibold text-lg mt-2 hover:opacity-90 transition"
             >
-              Create Account →
+              {isLoading ? 'Creating Account...' : 'Create Account →'}
             </button>
           </form>
 
