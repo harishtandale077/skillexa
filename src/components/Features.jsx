@@ -63,7 +63,7 @@ export default function Features() {
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-gray-900">
             Why Choose{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-purple-600">
-              SkillForge AI?
+              Skillexa ?
             </span>
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
