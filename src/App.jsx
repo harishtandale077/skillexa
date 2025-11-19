@@ -6,6 +6,10 @@ import Dashboard from './components/Dashboard.jsx';
 import ExamGenerator from './components/ExamGenerator.jsx';
 import ExamInterface from './components/ExamInterface.jsx';
 import ExamResults from './components/ExamResults.jsx';
+import SkillsPage from './components/SkillsPage.jsx';
+import LeaderboardPage from './components/LeaderboardPage.jsx';
+import AnalyticsPage from './components/AnalyticsPage.jsx';
+import AchievementsPage from './components/AchievementsPage.jsx';
 import Header from './components/Header.jsx';
 
 function App() {
@@ -106,6 +110,10 @@ function App() {
     setCurrentPage('exam-generator');
   };
 
+  const handleGenerateExamFromSkill = (skill) => {
+    setCurrentPage('exam-generator');
+  };
+
   // Show loading screen while checking session
   if (isLoading) {
     return (
@@ -155,8 +163,27 @@ function App() {
         <Dashboard 
           user={user} 
           onLogout={handleLogout}
-          onStartExam={() => setCurrentPage('exam-generator')}
+          onNavigate={setCurrentPage}
         />
+      )}
+
+      {currentPage === 'skills' && isAuthenticated && (
+        <SkillsPage 
+          onGenerateExam={handleGenerateExamFromSkill}
+          onBack={goToDashboard}
+        />
+      )}
+
+      {currentPage === 'leaderboard' && isAuthenticated && (
+        <LeaderboardPage />
+      )}
+
+      {currentPage === 'analytics' && isAuthenticated && (
+        <AnalyticsPage />
+      )}
+
+      {currentPage === 'achievements' && isAuthenticated && (
+        <AchievementsPage />
       )}
 
       {currentPage === 'exam-generator' && isAuthenticated && (
