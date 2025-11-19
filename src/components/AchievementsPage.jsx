@@ -1,21 +1,5 @@
 import { useState } from 'react';
-import { 
-  Award, 
-  Trophy, 
-  Star, 
-  Medal, 
-  Crown, 
-  Target,
-  Zap,
-  BookOpen,
-  Users,
-  Calendar,
-  Lock,
-  CheckCircle,
-  Progress,
-  Filter,
-  Search
-} from 'lucide-react';
+import { Award, Trophy, Star, Medal, Crown, Target, Zap, BookOpen, Users, Calendar, Lock, CheckCircle, Cross as Progress, Filter, Search } from 'lucide-react';
 
 export default function AchievementsPage() {
   const [selectedCategory, setSelectedCategory] = useState('all');
