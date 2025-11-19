@@ -29,18 +29,18 @@ import {
   ArrowRight
 } from 'lucide-react';
 
-export default function Dashboard({ user, onLogout }) {
+export default function Dashboard({ user, onLogout, onNavigate }) {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
   const sidebarItems = [
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
-    { id: 'skills', label: 'Skills', icon: Target },
-    { id: 'exams', label: 'Exams', icon: BookOpen },
-    { id: 'analytics', label: 'Analytics', icon: TrendingUp },
-    { id: 'leaderboard', label: 'Leaderboard', icon: Trophy },
-    { id: 'achievements', label: 'Achievements', icon: Award },
+    { id: 'skills', label: 'Skills', icon: Target, action: () => onNavigate('skills') },
+    { id: 'exams', label: 'Exams', icon: BookOpen, action: () => onNavigate('exam-generator') },
+    { id: 'analytics', label: 'Analytics', icon: TrendingUp, action: () => onNavigate('analytics') },
+    { id: 'leaderboard', label: 'Leaderboard', icon: Trophy, action: () => onNavigate('leaderboard') },
+    { id: 'achievements', label: 'Achievements', icon: Award, action: () => onNavigate('achievements') },
     { id: 'calendar', label: 'Calendar', icon: Calendar },
   ];
 
@@ -115,10 +115,10 @@ export default function Dashboard({ user, onLogout }) {
   ];
 
   const quickActions = [
-    { title: 'Generate AI Exam', icon: Brain, color: 'bg-violet-600', action: () => setActiveTab('exam-generator') },
-    { title: 'View Analytics', icon: BarChart3, color: 'bg-blue-600', action: () => setActiveTab('analytics') },
-    { title: 'Global Leaderboard', icon: Trophy, color: 'bg-yellow-600', action: () => setActiveTab('leaderboard') },
-    { title: 'My Achievements', icon: Award, color: 'bg-green-600', action: () => setActiveTab('achievements') }
+    { title: 'Generate AI Exam', icon: Brain, color: 'bg-violet-600', action: () => onNavigate('exam-generator') },
+    { title: 'View Analytics', icon: BarChart3, color: 'bg-blue-600', action: () => onNavigate('analytics') },
+    { title: 'Global Leaderboard', icon: Trophy, color: 'bg-yellow-600', action: () => onNavigate('leaderboard') },
+    { title: 'My Achievements', icon: Award, color: 'bg-green-600', action: () => onNavigate('achievements') }
   ];
 
   const getLevelColor = (level) => {
@@ -185,7 +185,11 @@ export default function Dashboard({ user, onLogout }) {
                 <button
                   key={item.id}
                   onClick={() => {
-                    setActiveTab(item.id);
+                    if (item.action) {
+                      item.action();
+                    } else {
+                      setActiveTab(item.id);
+                    }
                     setIsSidebarOpen(false);
                   }}
                   className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
@@ -279,7 +283,7 @@ export default function Dashboard({ user, onLogout }) {
 
               {/* Action Buttons */}
               <button 
-                onClick={() => setActiveTab('exam-generator')}
+                onClick={() => onNavigate('exam-generator')}
                 className="hidden sm:flex bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-lg font-medium transition-colors items-center gap-2"
               >
                 <Brain className="w-4 h-4" />
@@ -406,7 +410,7 @@ export default function Dashboard({ user, onLogout }) {
 
                         <div className="flex gap-2">
                           <button 
-                            onClick={() => setActiveTab('exam-generator')}
+                            onClick={() => onNavigate('exam-generator')}
                             className="flex-1 bg-violet-600 hover:bg-violet-700 text-white py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 text-sm"
                           >
                             <Zap className="w-4 h-4" />
@@ -434,7 +438,7 @@ export default function Dashboard({ user, onLogout }) {
                       <Download className="w-4 h-4 text-gray-600" />
                     </button>
                     <button 
-                      onClick={() => setActiveTab('analytics')}
+                      onClick={() => onNavigate('analytics')}
                       className="text-violet-600 hover:text-violet-700 font-medium flex items-center gap-1 text-sm sm:text-base"
                     >
                       View Analytics <ChevronRight className="w-4 h-4" />
@@ -488,7 +492,7 @@ export default function Dashboard({ user, onLogout }) {
                 {sidebarItems.find(item => item.id === activeTab)?.label} Page
               </h3>
               <p className="text-gray-600 mb-6">
-                This section is under development. Coming soon with advanced features!
+                Navigate using the sidebar to access this feature.
               </p>
               <button 
                 onClick={() => setActiveTab('dashboard')}
