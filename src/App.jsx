@@ -3,6 +3,9 @@ import LandingPage from './pages/LandingPage.jsx';
 import Login from './components/Login.jsx';
 import Register from './components/Register.jsx';
 import Dashboard from './components/Dashboard.jsx';
+import ExamGenerator from './components/ExamGenerator.jsx';
+import ExamInterface from './components/ExamInterface.jsx';
+import ExamResults from './components/ExamResults.jsx';
 import Header from './components/Header.jsx';
 
 function App() {
@@ -10,6 +13,8 @@ function App() {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [examData, setExamData] = useState(null);
+  const [examResults, setExamResults] = useState(null);
 
   // Check for existing session on app load
   useEffect(() => {
@@ -75,6 +80,8 @@ function App() {
       setUser(null);
       setIsAuthenticated(false);
       setCurrentPage('landing');
+      setExamData(null);
+      setExamResults(null);
       
       // Clear session
       localStorage.removeItem('skillforge_user');
@@ -84,13 +91,28 @@ function App() {
     }
   };
 
+  const handleStartExam = (data) => {
+    setExamData(data);
+    setCurrentPage('exam');
+  };
+
+  const handleExamComplete = (results) => {
+    setExamResults(results);
+    setCurrentPage('results');
+  };
+
+  const handleRetakeExam = () => {
+    setExamResults(null);
+    setCurrentPage('exam-generator');
+  };
+
   // Show loading screen while checking session
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-blue-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-violet-200 border-t-violet-600 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 font-medium">Loading Skillexa AI...</p>
+          <p className="text-gray-600 font-medium">Loading SkillForge AI...</p>
         </div>
       </div>
     );
@@ -130,7 +152,34 @@ function App() {
       )}
 
       {currentPage === 'dashboard' && isAuthenticated && (
-        <Dashboard user={user} onLogout={handleLogout} />
+        <Dashboard 
+          user={user} 
+          onLogout={handleLogout}
+          onStartExam={() => setCurrentPage('exam-generator')}
+        />
+      )}
+
+      {currentPage === 'exam-generator' && isAuthenticated && (
+        <ExamGenerator 
+          onBack={goToDashboard}
+          onStartExam={handleStartExam}
+        />
+      )}
+
+      {currentPage === 'exam' && isAuthenticated && examData && (
+        <ExamInterface 
+          examData={examData}
+          onExamComplete={handleExamComplete}
+          onBack={() => setCurrentPage('exam-generator')}
+        />
+      )}
+
+      {currentPage === 'results' && isAuthenticated && examResults && (
+        <ExamResults 
+          results={examResults}
+          onRetakeExam={handleRetakeExam}
+          onBackToDashboard={goToDashboard}
+        />
       )}
     </div>
   );

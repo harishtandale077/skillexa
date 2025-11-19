@@ -22,7 +22,11 @@ import {
   Filter,
   Download,
   Share2,
-  Plus
+  Plus,
+  Brain,
+  Users,
+  CheckCircle,
+  ArrowRight
 } from 'lucide-react';
 
 export default function Dashboard({ user, onLogout }) {
@@ -110,10 +114,11 @@ export default function Dashboard({ user, onLogout }) {
     }
   ];
 
-  const notifications = [
-    { id: 1, message: 'New skill recommendation available', time: '2 min ago', type: 'info' },
-    { id: 2, message: 'Exam reminder: ML Fundamentals in 1 hour', time: '45 min ago', type: 'warning' },
-    { id: 3, message: 'Achievement unlocked: 7-day streak!', time: '1 day ago', type: 'success' }
+  const quickActions = [
+    { title: 'Generate AI Exam', icon: Brain, color: 'bg-violet-600', action: () => setActiveTab('exam-generator') },
+    { title: 'View Analytics', icon: BarChart3, color: 'bg-blue-600', action: () => setActiveTab('analytics') },
+    { title: 'Global Leaderboard', icon: Trophy, color: 'bg-yellow-600', action: () => setActiveTab('leaderboard') },
+    { title: 'My Achievements', icon: Award, color: 'bg-green-600', action: () => setActiveTab('achievements') }
   ];
 
   const getLevelColor = (level) => {
@@ -158,12 +163,8 @@ export default function Dashboard({ user, onLogout }) {
         <div className="p-4 sm:p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <img
-                src="/skillforge-logo.png"
-                alt="SkillForge AI"
-                className="w-8 h-8 object-contain"
-              />
-              <span className="text-lg font-bold text-gray-900">Skillexa</span>
+              <BookOpen className="w-8 h-8 text-violet-600" />
+              <span className="text-lg font-bold text-gray-900">SkillForge AI</span>
             </div>
             <button
               onClick={() => setIsSidebarOpen(false)}
@@ -214,7 +215,10 @@ export default function Dashboard({ user, onLogout }) {
           </div>
           
           <div className="space-y-2">
-            <button className="w-full flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+            <button 
+              onClick={() => setActiveTab('settings')}
+              className="w-full flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+            >
               <Settings className="w-4 h-4" />
               <span className="text-sm">Settings</span>
             </button>
@@ -274,14 +278,17 @@ export default function Dashboard({ user, onLogout }) {
               </div>
 
               {/* Action Buttons */}
-              <button className="hidden sm:flex bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-lg font-medium transition-colors items-center gap-2">
-                <Play className="w-4 h-4" />
-                <span className="hidden md:inline">Explore Skills</span>
+              <button 
+                onClick={() => setActiveTab('exam-generator')}
+                className="hidden sm:flex bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-lg font-medium transition-colors items-center gap-2"
+              >
+                <Brain className="w-4 h-4" />
+                <span className="hidden md:inline">Generate Exam</span>
               </button>
               
               <button className="bg-white hover:bg-gray-50 text-gray-900 px-3 sm:px-4 py-2 rounded-lg font-medium border border-gray-300 transition-colors flex items-center gap-2">
                 <Plus className="w-4 h-4" />
-                <span className="hidden sm:inline">New Exam</span>
+                <span className="hidden sm:inline">New Skill</span>
               </button>
             </div>
           </div>
@@ -289,157 +296,208 @@ export default function Dashboard({ user, onLogout }) {
 
         {/* Dashboard Content */}
         <main className="p-4 sm:p-6 lg:p-8">
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
-            {stats.map((stat, index) => {
-              const Icon = stat.icon;
-              return (
-                <div key={index} className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200 hover:shadow-lg transition-shadow">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className={`p-2 rounded-lg ${stat.bg}`}>
-                      <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${stat.color}`} />
+          {activeTab === 'dashboard' && (
+            <>
+              {/* Stats Grid */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+                {stats.map((stat, index) => {
+                  const Icon = stat.icon;
+                  return (
+                    <div key={index} className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200 hover:shadow-lg transition-shadow">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className={`p-2 rounded-lg ${stat.bg}`}>
+                          <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${stat.color}`} />
+                        </div>
+                        <div className="text-right">
+                          <div className="text-xl sm:text-2xl font-bold text-gray-900">{stat.value}</div>
+                          <div className="text-xs sm:text-sm text-gray-600">{stat.unit}</div>
+                        </div>
+                      </div>
+                      <div className="text-xs sm:text-sm font-medium text-gray-700">{stat.label}</div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-xl sm:text-2xl font-bold text-gray-900">{stat.value}</div>
-                      <div className="text-xs sm:text-sm text-gray-600">{stat.unit}</div>
-                    </div>
-                  </div>
-                  <div className="text-xs sm:text-sm font-medium text-gray-700">{stat.label}</div>
+                  );
+                })}
+              </div>
+
+              {/* Quick Actions */}
+              <div className="mb-6 sm:mb-8">
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                  {quickActions.map((action, index) => {
+                    const Icon = action.icon;
+                    return (
+                      <button
+                        key={index}
+                        onClick={action.action}
+                        className={`${action.color} hover:opacity-90 text-white p-4 sm:p-6 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg`}
+                      >
+                        <Icon className="w-6 h-6 sm:w-8 sm:h-8 mb-2 sm:mb-3 mx-auto" />
+                        <div className="text-sm sm:text-base font-medium text-center">{action.title}</div>
+                      </button>
+                    );
+                  })}
                 </div>
-              );
-            })}
-          </div>
-
-          {/* Recommended Skills */}
-          <div className="mb-6 sm:mb-8">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
-              <div>
-                <h2 className="text-lg sm:text-xl font-bold text-gray-900">Recommended Skills</h2>
-                <p className="text-gray-600 text-sm sm:text-base">Based on your learning history and interests</p>
               </div>
-              <div className="flex items-center gap-2">
-                <button className="p-2 hover:bg-gray-100 rounded-lg">
-                  <Filter className="w-4 h-4 text-gray-600" />
-                </button>
-                <button className="text-violet-600 hover:text-violet-700 font-medium flex items-center gap-1 text-sm sm:text-base">
-                  View All <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-              {recommendedSkills.map((skill, index) => (
-                <div key={index} className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                  <div className="h-32 sm:h-48 bg-gradient-to-br from-gray-800 to-gray-900 relative overflow-hidden">
-                    <img 
-                      src={skill.image} 
-                      alt={skill.title}
-                      className="w-full h-full object-cover opacity-60"
-                    />
-                    <div className="absolute top-4 right-4 flex gap-2">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getLevelColor(skill.level)}`}>
-                        {skill.level}
-                      </span>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(skill.difficulty)}`}>
-                        {skill.difficulty}
-                      </span>
-                    </div>
-                    <div className="absolute bottom-4 left-4 flex items-center gap-2 text-white text-xs">
-                      <Clock className="w-3 h-3" />
-                      <span>{skill.estimatedTime}</span>
-                    </div>
+              {/* Recommended Skills */}
+              <div className="mb-6 sm:mb-8">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+                  <div>
+                    <h2 className="text-lg sm:text-xl font-bold text-gray-900">Recommended Skills</h2>
+                    <p className="text-gray-600 text-sm sm:text-base">Based on your learning history and interests</p>
                   </div>
-                  
-                  <div className="p-4 sm:p-6">
-                    <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2">{skill.title}</h3>
-                    <p className="text-gray-600 text-xs sm:text-sm mb-4 leading-relaxed line-clamp-2">{skill.description}</p>
-                    
-                    <div className="flex flex-wrap gap-1 sm:gap-2 mb-4">
-                      {skill.tags.map((tag, tagIndex) => (
-                        <span key={tagIndex} className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
-                          {tag}
+                  <div className="flex items-center gap-2">
+                    <button className="p-2 hover:bg-gray-100 rounded-lg">
+                      <Filter className="w-4 h-4 text-gray-600" />
+                    </button>
+                    <button className="text-violet-600 hover:text-violet-700 font-medium flex items-center gap-1 text-sm sm:text-base">
+                      View All <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+                  {recommendedSkills.map((skill, index) => (
+                    <div key={index} className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                      <div className="h-32 sm:h-48 bg-gradient-to-br from-gray-800 to-gray-900 relative overflow-hidden">
+                        <img 
+                          src={skill.image} 
+                          alt={skill.title}
+                          className="w-full h-full object-cover opacity-60"
+                        />
+                        <div className="absolute top-4 right-4 flex gap-2">
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getLevelColor(skill.level)}`}>
+                            {skill.level}
+                          </span>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(skill.difficulty)}`}>
+                            {skill.difficulty}
+                          </span>
+                        </div>
+                        <div className="absolute bottom-4 left-4 flex items-center gap-2 text-white text-xs">
+                          <Clock className="w-3 h-3" />
+                          <span>{skill.estimatedTime}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="p-4 sm:p-6">
+                        <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2">{skill.title}</h3>
+                        <p className="text-gray-600 text-xs sm:text-sm mb-4 leading-relaxed line-clamp-2">{skill.description}</p>
+                        
+                        <div className="flex flex-wrap gap-1 sm:gap-2 mb-4">
+                          {skill.tags.map((tag, tagIndex) => (
+                            <span key={tagIndex} className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+
+                        <div className="mb-4">
+                          <div className="flex items-center justify-between text-xs sm:text-sm mb-2">
+                            <span className="text-gray-600">Mastery Level</span>
+                            <span className="font-medium text-gray-900">{skill.progress}%</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div 
+                              className="bg-violet-600 h-2 rounded-full transition-all duration-300"
+                              style={{ width: `${skill.progress}%` }}
+                            ></div>
+                          </div>
+                        </div>
+
+                        <div className="flex gap-2">
+                          <button 
+                            onClick={() => setActiveTab('exam-generator')}
+                            className="flex-1 bg-violet-600 hover:bg-violet-700 text-white py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 text-sm"
+                          >
+                            <Zap className="w-4 h-4" />
+                            Generate Exam
+                          </button>
+                          <button className="p-2 border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors">
+                            <Share2 className="w-4 h-4 text-gray-600" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Recent Activity */}
+              <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+                  <div>
+                    <h2 className="text-lg sm:text-xl font-bold text-gray-900">Recent Activity</h2>
+                    <p className="text-gray-600 text-sm sm:text-base">Your latest exam results and performance</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button className="p-2 hover:bg-gray-100 rounded-lg">
+                      <Download className="w-4 h-4 text-gray-600" />
+                    </button>
+                    <button 
+                      onClick={() => setActiveTab('analytics')}
+                      className="text-violet-600 hover:text-violet-700 font-medium flex items-center gap-1 text-sm sm:text-base"
+                    >
+                      View Analytics <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  {recentActivity.map((activity, index) => (
+                    <div key={index} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 rounded-lg gap-4">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-violet-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <BookOpen className="w-5 h-5 text-violet-600" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <h3 className="font-medium text-gray-900 truncate">{activity.title}</h3>
+                          <p className="text-sm text-gray-600">{activity.subject}</p>
+                          <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
+                            <Clock className="w-3 h-3" />
+                            <span>{activity.duration}</span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-4 sm:flex-shrink-0">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getLevelColor(activity.level)}`}>
+                          {activity.level}
                         </span>
-                      ))}
-                    </div>
-
-                    <div className="mb-4">
-                      <div className="flex items-center justify-between text-xs sm:text-sm mb-2">
-                        <span className="text-gray-600">Mastery Level</span>
-                        <span className="font-medium text-gray-900">{skill.progress}%</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div 
-                          className="bg-violet-600 h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${skill.progress}%` }}
-                        ></div>
+                        <div className="text-right">
+                          <div className={`text-lg font-bold ${getScoreColor(activity.score)}`}>
+                            {activity.score}%
+                          </div>
+                          <div className="text-sm text-gray-600">{activity.date}</div>
+                          <div className="text-xs text-gray-500">{activity.time}</div>
+                        </div>
                       </div>
                     </div>
-
-                    <div className="flex gap-2">
-                      <button className="flex-1 bg-violet-600 hover:bg-violet-700 text-white py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 text-sm">
-                        <Zap className="w-4 h-4" />
-                        Generate Exam
-                      </button>
-                      <button className="p-2 border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors">
-                        <Share2 className="w-4 h-4 text-gray-600" />
-                      </button>
-                    </div>
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Recent Activity */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
-              <div>
-                <h2 className="text-lg sm:text-xl font-bold text-gray-900">Recent Activity</h2>
-                <p className="text-gray-600 text-sm sm:text-base">Your latest exam results and performance</p>
               </div>
-              <div className="flex items-center gap-2">
-                <button className="p-2 hover:bg-gray-100 rounded-lg">
-                  <Download className="w-4 h-4 text-gray-600" />
-                </button>
-                <button className="text-violet-600 hover:text-violet-700 font-medium flex items-center gap-1 text-sm sm:text-base">
-                  View Analytics <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
+            </>
+          )}
 
-            <div className="space-y-4">
-              {recentActivity.map((activity, index) => (
-                <div key={index} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 rounded-lg gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-violet-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <BookOpen className="w-5 h-5 text-violet-600" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <h3 className="font-medium text-gray-900 truncate">{activity.title}</h3>
-                      <p className="text-sm text-gray-600">{activity.subject}</p>
-                      <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
-                        <Clock className="w-3 h-3" />
-                        <span>{activity.duration}</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-4 sm:flex-shrink-0">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getLevelColor(activity.level)}`}>
-                      {activity.level}
-                    </span>
-                    <div className="text-right">
-                      <div className={`text-lg font-bold ${getScoreColor(activity.score)}`}>
-                        {activity.score}%
-                      </div>
-                      <div className="text-sm text-gray-600">{activity.date}</div>
-                      <div className="text-xs text-gray-500">{activity.time}</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+          {/* Other tab content will be rendered here */}
+          {activeTab !== 'dashboard' && (
+            <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+              <div className="text-gray-500 mb-4">
+                <BookOpen className="w-16 h-16 mx-auto mb-4 opacity-50" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                {sidebarItems.find(item => item.id === activeTab)?.label} Page
+              </h3>
+              <p className="text-gray-600 mb-6">
+                This section is under development. Coming soon with advanced features!
+              </p>
+              <button 
+                onClick={() => setActiveTab('dashboard')}
+                className="bg-violet-600 hover:bg-violet-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+              >
+                Back to Dashboard
+              </button>
             </div>
-          </div>
+          )}
         </main>
       </div>
     </div>
