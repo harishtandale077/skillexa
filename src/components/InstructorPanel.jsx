@@ -1,25 +1,5 @@
 import { useState } from 'react';
-import { 
-  BookOpen, 
-  Users, 
-  BarChart3, 
-  Plus, 
-  Edit3, 
-  Eye, 
-  Trash2,
-  Search,
-  Filter,
-  Download,
-  Upload,
-  Clock,
-  CheckCircle,
-  AlertCircle,
-  Target,
-  Award,
-  TrendingUp,
-  Calendar,
-  Star
-} from 'lucide-react';
+import { BookOpen, Users, BarChart3, Plus, CreditCard as Edit3, Eye, Trash2, Search, Filter, Download, Upload, Clock, CheckCircle, AlertCircle, Target, Award, TrendingUp, Calendar, Star } from 'lucide-react';
 
 export default function InstructorPanel({ onBack, onCreateExam }) {
   const [activeTab, setActiveTab] = useState('overview');

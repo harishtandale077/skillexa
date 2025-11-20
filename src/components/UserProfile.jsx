@@ -1,27 +1,5 @@
 import { useState } from 'react';
-import { 
-  User, 
-  Mail, 
-  Calendar, 
-  MapPin, 
-  Phone, 
-  Edit3, 
-  Save, 
-  X, 
-  Camera,
-  Award,
-  Target,
-  Clock,
-  Star,
-  Trophy,
-  Zap,
-  BookOpen,
-  Settings,
-  Shield,
-  Bell,
-  Eye,
-  EyeOff
-} from 'lucide-react';
+import { User, Mail, Calendar, MapPin, Phone, CreditCard as Edit3, Save, X, Camera, Award, Target, Clock, Star, Trophy, Zap, BookOpen, Settings, Shield, Bell, Eye, EyeOff } from 'lucide-react';
 
 export default function UserProfile({ user, onUpdateUser, onBack }) {
   const [isEditing, setIsEditing] = useState(false);

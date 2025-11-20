@@ -1,25 +1,5 @@
 import { useState } from 'react';
-import { 
-  Users, 
-  BookOpen, 
-  BarChart3, 
-  Settings, 
-  Shield, 
-  AlertTriangle,
-  TrendingUp,
-  Clock,
-  Award,
-  Target,
-  Search,
-  Filter,
-  Plus,
-  Edit3,
-  Trash2,
-  Eye,
-  Download,
-  Upload,
-  RefreshCw
-} from 'lucide-react';
+import { Users, BookOpen, BarChart3, Settings, Shield, AlertTriangle, TrendingUp, Clock, Award, Target, Search, Filter, Plus, CreditCard as Edit3, Trash2, Eye, Download, Upload, RefreshCw } from 'lucide-react';
 
 export default function AdminPanel({ onBack }) {
   const [activeTab, setActiveTab] = useState('overview');
