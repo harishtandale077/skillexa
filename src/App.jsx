@@ -3,6 +3,11 @@ import LandingPage from './pages/LandingPage.jsx';
 import Login from './components/Login.jsx';
 import Register from './components/Register.jsx';
 import Dashboard from './components/Dashboard.jsx';
+import UserProfile from './components/UserProfile.jsx';
+import CertificatesPage from './components/CertificatesPage.jsx';
+import ExamStatusPage from './components/ExamStatusPage.jsx';
+import AdminPanel from './components/AdminPanel.jsx';
+import InstructorPanel from './components/InstructorPanel.jsx';
 import ExamGenerator from './components/ExamGenerator.jsx';
 import ExamInterface from './components/ExamInterface.jsx';
 import ExamResults from './components/ExamResults.jsx';
@@ -76,6 +81,15 @@ function App() {
       localStorage.setItem('skillforge_auth', 'true');
     } catch (error) {
       console.error('Error saving user session:', error);
+    }
+  };
+
+  const handleUpdateUser = (updatedUser) => {
+    try {
+      setUser(updatedUser);
+      localStorage.setItem('skillforge_user', JSON.stringify(updatedUser));
+    } catch (error) {
+      console.error('Error updating user:', error);
     }
   };
 
@@ -164,6 +178,40 @@ function App() {
           user={user} 
           onLogout={handleLogout}
           onNavigate={setCurrentPage}
+        />
+      )}
+
+      {currentPage === 'profile' && isAuthenticated && (
+        <UserProfile 
+          user={user}
+          onUpdateUser={handleUpdateUser}
+          onBack={goToDashboard}
+        />
+      )}
+
+      {currentPage === 'certificates' && isAuthenticated && (
+        <CertificatesPage 
+          onBack={goToDashboard}
+        />
+      )}
+
+      {currentPage === 'exam-status' && isAuthenticated && (
+        <ExamStatusPage 
+          onBack={goToDashboard}
+          onStartExam={handleStartExam}
+        />
+      )}
+
+      {currentPage === 'admin' && isAuthenticated && (
+        <AdminPanel 
+          onBack={goToDashboard}
+        />
+      )}
+
+      {currentPage === 'instructor' && isAuthenticated && (
+        <InstructorPanel 
+          onBack={goToDashboard}
+          onCreateExam={() => setCurrentPage('exam-generator')}
         />
       )}
 

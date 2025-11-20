@@ -38,11 +38,22 @@ export default function Dashboard({ user, onLogout, onNavigate }) {
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
     { id: 'skills', label: 'Skills', icon: Target, action: () => onNavigate('skills') },
     { id: 'exams', label: 'Exams', icon: BookOpen, action: () => onNavigate('exam-generator') },
+    { id: 'exam-status', label: 'Exam Status', icon: Clock, action: () => onNavigate('exam-status') },
     { id: 'analytics', label: 'Analytics', icon: TrendingUp, action: () => onNavigate('analytics') },
     { id: 'leaderboard', label: 'Leaderboard', icon: Trophy, action: () => onNavigate('leaderboard') },
     { id: 'achievements', label: 'Achievements', icon: Award, action: () => onNavigate('achievements') },
-    { id: 'calendar', label: 'Calendar', icon: Calendar },
+    { id: 'certificates', label: 'Certificates', icon: Award, action: () => onNavigate('certificates') },
+    { id: 'profile', label: 'Profile', icon: User, action: () => onNavigate('profile') }
   ];
+
+  // Add admin/instructor panels based on user role
+  const userRole = user?.role || 'student'; // Default to student
+  if (userRole === 'admin') {
+    sidebarItems.push({ id: 'admin', label: 'Admin Panel', icon: Shield, action: () => onNavigate('admin') });
+  }
+  if (userRole === 'instructor' || userRole === 'admin') {
+    sidebarItems.push({ id: 'instructor', label: 'Instructor Panel', icon: BookOpen, action: () => onNavigate('instructor') });
+  }
 
   const stats = [
     { label: 'Current Streak', value: '14', unit: 'days', icon: Zap, color: 'text-orange-600', bg: 'bg-orange-100' },
@@ -220,11 +231,11 @@ export default function Dashboard({ user, onLogout, onNavigate }) {
           
           <div className="space-y-2">
             <button 
-              onClick={() => setActiveTab('settings')}
+              onClick={() => onNavigate('profile')}
               className="w-full flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
             >
               <Settings className="w-4 h-4" />
-              <span className="text-sm">Settings</span>
+              <span className="text-sm">Profile</span>
             </button>
             <button 
               onClick={onLogout}
