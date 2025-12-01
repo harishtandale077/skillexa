@@ -1,4 +1,8 @@
 import { useState, useEffect } from 'react';
+import { Toaster } from 'react-hot-toast';
+import useAuthStore from './store/authStore';
+
+// Import components
 import LandingPage from './pages/LandingPage.jsx';
 import Login from './components/Login.jsx';
 import Register from './components/Register.jsx';
@@ -19,96 +23,69 @@ import Header from './components/Header.jsx';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('landing');
-  const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [examData, setExamData] = useState(null);
   const [examResults, setExamResults] = useState(null);
 
-  // Check for existing session on app load
+  const { 
+    user, 
+    isAuthenticated, 
+    initialize, 
+    login, 
+    register, 
+    logout, 
+    updateUser 
+  } = useAuthStore();
+
+  // Initialize auth state on app load
   useEffect(() => {
-    const checkExistingSession = () => {
+    const initializeApp = async () => {
       try {
-        const savedUser = localStorage.getItem('skillforge_user');
-        const savedAuth = localStorage.getItem('skillforge_auth');
-        
-        if (savedUser && savedAuth === 'true') {
-          const userData = JSON.parse(savedUser);
-          setUser(userData);
-          setIsAuthenticated(true);
+        await initialize();
+        if (isAuthenticated) {
           setCurrentPage('dashboard');
         }
       } catch (error) {
-        console.error('Error checking existing session:', error);
-        // Clear corrupted data
-        localStorage.removeItem('skillforge_user');
-        localStorage.removeItem('skillforge_auth');
+        console.error('App initialization error:', error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    checkExistingSession();
-  }, []);
+    initializeApp();
+  }, [initialize, isAuthenticated]);
 
+  // Navigation functions
   const goToLogin = () => setCurrentPage('login');
   const goToRegister = () => setCurrentPage('register');
   const goToLanding = () => setCurrentPage('landing');
   const goToDashboard = () => setCurrentPage('dashboard');
 
-  const handleLogin = (userData) => {
-    try {
-      setUser(userData);
-      setIsAuthenticated(true);
+  // Auth handlers
+  const handleLogin = async (credentials) => {
+    const result = await login(credentials);
+    if (result.success) {
       setCurrentPage('dashboard');
-      
-      // Persist session
-      localStorage.setItem('skillforge_user', JSON.stringify(userData));
-      localStorage.setItem('skillforge_auth', 'true');
-    } catch (error) {
-      console.error('Error saving user session:', error);
     }
+    return result;
   };
 
-  const handleRegister = (userData) => {
-    try {
-      setUser(userData);
-      setIsAuthenticated(true);
+  const handleRegister = async (userData) => {
+    const result = await register(userData);
+    if (result.success) {
       setCurrentPage('dashboard');
-      
-      // Persist session
-      localStorage.setItem('skillforge_user', JSON.stringify(userData));
-      localStorage.setItem('skillforge_auth', 'true');
-    } catch (error) {
-      console.error('Error saving user session:', error);
     }
+    return result;
   };
 
-  const handleUpdateUser = (updatedUser) => {
-    try {
-      setUser(updatedUser);
-      localStorage.setItem('skillforge_user', JSON.stringify(updatedUser));
-    } catch (error) {
-      console.error('Error updating user:', error);
-    }
+  const handleLogout = async () => {
+    await logout();
+    setCurrentPage('landing');
+    setExamData(null);
+    setExamResults(null);
   };
 
-  const handleLogout = () => {
-    try {
-      setUser(null);
-      setIsAuthenticated(false);
-      setCurrentPage('landing');
-      setExamData(null);
-      setExamResults(null);
-      
-      // Clear session
-      localStorage.removeItem('skillforge_user');
-      localStorage.removeItem('skillforge_auth');
-    } catch (error) {
-      console.error('Error clearing user session:', error);
-    }
-  };
-
+  // Exam handlers
   const handleStartExam = (data) => {
     setExamData(data);
     setCurrentPage('exam');
@@ -128,7 +105,7 @@ function App() {
     setCurrentPage('exam-generator');
   };
 
-  // Show loading screen while checking session
+  // Show loading screen while initializing
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-blue-50 flex items-center justify-center">
@@ -142,6 +119,32 @@ function App() {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Toast notifications */}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#363636',
+            color: '#fff',
+          },
+          success: {
+            duration: 3000,
+            theme: {
+              primary: '#4ade80',
+              secondary: '#fff',
+            },
+          },
+          error: {
+            duration: 4000,
+            theme: {
+              primary: '#ef4444',
+              secondary: '#fff',
+            },
+          },
+        }}
+      />
+
       {/* Show header only for non-authenticated pages */}
       {!isAuthenticated && (
         <Header 
@@ -184,7 +187,7 @@ function App() {
       {currentPage === 'profile' && isAuthenticated && (
         <UserProfile 
           user={user}
-          onUpdateUser={handleUpdateUser}
+          onUpdateUser={updateUser}
           onBack={goToDashboard}
         />
       )}
@@ -202,13 +205,13 @@ function App() {
         />
       )}
 
-      {currentPage === 'admin' && isAuthenticated && (
+      {currentPage === 'admin' && isAuthenticated && user?.role === 'admin' && (
         <AdminPanel 
           onBack={goToDashboard}
         />
       )}
 
-      {currentPage === 'instructor' && isAuthenticated && (
+      {currentPage === 'instructor' && isAuthenticated && (user?.role === 'instructor' || user?.role === 'admin') && (
         <InstructorPanel 
           onBack={goToDashboard}
           onCreateExam={() => setCurrentPage('exam-generator')}
@@ -223,15 +226,15 @@ function App() {
       )}
 
       {currentPage === 'leaderboard' && isAuthenticated && (
-        <LeaderboardPage />
+        <LeaderboardPage onBack={goToDashboard} />
       )}
 
       {currentPage === 'analytics' && isAuthenticated && (
-        <AnalyticsPage />
+        <AnalyticsPage onBack={goToDashboard} />
       )}
 
       {currentPage === 'achievements' && isAuthenticated && (
-        <AchievementsPage />
+        <AchievementsPage onBack={goToDashboard} />
       )}
 
       {currentPage === 'exam-generator' && isAuthenticated && (
