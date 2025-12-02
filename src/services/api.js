@@ -33,7 +33,8 @@ api.interceptors.response.use(
       // Token expired or invalid
       localStorage.removeItem('skillforge_token');
       localStorage.removeItem('skillforge_user');
-      window.location.href = '/login';
+      // Don't redirect automatically, let the app handle it
+      console.warn('Authentication expired');
     }
     return Promise.reject(error);
   }

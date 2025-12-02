@@ -40,11 +40,9 @@ function App() {
   // Initialize auth state on app load
   useEffect(() => {
     const initializeApp = async () => {
+      setIsLoading(true);
       try {
         await initialize();
-        if (isAuthenticated) {
-          setCurrentPage('dashboard');
-        }
       } catch (error) {
         console.error('App initialization error:', error);
       } finally {
@@ -53,7 +51,16 @@ function App() {
     };
 
     initializeApp();
-  }, [initialize, isAuthenticated]);
+  }, [initialize]);
+
+  // Handle authentication state changes
+  useEffect(() => {
+    if (isAuthenticated && currentPage === 'landing') {
+      setCurrentPage('dashboard');
+    } else if (!isAuthenticated && !['landing', 'login', 'register'].includes(currentPage)) {
+      setCurrentPage('landing');
+    }
+  }, [isAuthenticated, currentPage]);
 
   // Navigation functions
   const goToLogin = () => setCurrentPage('login');

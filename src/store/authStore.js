@@ -1,11 +1,8 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import { authAPI } from '../services/api';
 import toast from 'react-hot-toast';
 
-const useAuthStore = create(
-  persist(
-    (set, get) => ({
+const useAuthStore = create((set, get) => ({
       user: null,
       token: null,
       isAuthenticated: false,
@@ -120,21 +117,41 @@ const useAuthStore = create(
       // Initialize auth state
       initialize: async () => {
         const token = localStorage.getItem('skillforge_token');
+        const userData = localStorage.getItem('skillforge_user');
+        
         if (token) {
-          set({ token, isAuthenticated: true });
-          await get().getProfile();
+          try {
+            const user = userData ? JSON.parse(userData) : null;
+            set({ 
+              token, 
+              user,
+              isAuthenticated: true 
+            });
+            
+            // Verify token is still valid
+            const result = await get().getProfile();
+            if (!result.success) {
+              // Token expired, clear storage
+              localStorage.removeItem('skillforge_token');
+              localStorage.removeItem('skillforge_user');
+              set({
+                user: null,
+                token: null,
+                isAuthenticated: false
+              });
+            }
+          } catch (error) {
+            console.error('Error initializing auth:', error);
+            localStorage.removeItem('skillforge_token');
+            localStorage.removeItem('skillforge_user');
+            set({
+              user: null,
+              token: null,
+              isAuthenticated: false
+            });
+          }
         }
       }
-    }),
-    {
-      name: 'skillforge-auth',
-      partialize: (state) => ({
-        user: state.user,
-        token: state.token,
-        isAuthenticated: state.isAuthenticated
-      })
-    }
-  )
-);
+    }));
 
 export default useAuthStore;

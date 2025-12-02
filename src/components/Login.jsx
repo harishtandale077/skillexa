@@ -35,22 +35,16 @@ export default function Login({ goToRegister, goToLanding, onLogin }) {
     
     setIsLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      // Mock authentication - in real app, validate against backend
-      const userData = {
-        name: 'SkillMaster_42',
-        email: email,
-        id: '1',
-        streak: 14,
-        points: 12500,
-        examsCompleted: 18,
-        masteredSkills: 4
-      };
-      
-      onLogin(userData);
+    try {
+      const result = await onLogin({ email, password });
+      if (result.success) {
+        // Login successful, navigation handled by App component
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (

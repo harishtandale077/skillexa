@@ -76,21 +76,20 @@ export default function Register({ goToLogin, goToLanding, onRegister }) {
 
     setIsLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      const userData = {
+    try {
+      const result = await onRegister({
         name: formData.fullName,
         email: formData.email,
-        id: Date.now().toString(),
-        streak: 0,
-        points: 0,
-        examsCompleted: 0,
-        masteredSkills: 0
-      };
-      
-      onRegister(userData);
+        password: formData.password
+      });
+      if (result.success) {
+        // Registration successful, navigation handled by App component
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   return (
